@@ -5,7 +5,7 @@ const bcrypt = require('bcryptjs')
 const generateToken = require('../utils/generate-token')
 const User = require('../models/user')
 
-
+//   REGISTER
 exports.registerUser = asyncHandler(async (req, res) => {
   const { name, email, password, confirmPassword } = req.body
 
@@ -33,6 +33,8 @@ exports.registerUser = asyncHandler(async (req, res) => {
   }
 })
 
+
+//   SIGN IN   
 exports.loginUser = asyncHandler(async (req, res) => {
   const { email, password } = req.body
 
@@ -55,5 +57,24 @@ exports.loginUser = asyncHandler(async (req, res) => {
 
   } catch (err) {
     res.status(500).json(err)
+  }
+})
+
+
+//   USER PROFILE
+exports.getUserProfile = asyncHandler(async (req, res) => {
+  try {
+    const user = await User.findById(req.user._id)
+
+    if (user) {
+      res.json({
+        _id: user._id,
+        name: user.name,
+        email: user.email,
+        createdAt: user.createdAt,
+      })
+    }
+  } catch (err) {
+    res.status(401).json(err)
   }
 })
