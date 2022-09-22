@@ -32,3 +32,28 @@ exports.registerUser = asyncHandler(async (req, res) => {
     res.status(500).json(err)
   }
 })
+
+exports.loginUser = asyncHandler(async (req, res) => {
+  const { email, password } = req.body
+
+  try {
+    const existingUser = await User.findOne({ email })
+
+    if (!existingUser) return res.status(404).json({ message: `User for this email not found.` })
+
+    const isPasswordCorrect = await bcrypt.compare(password, existingUser.password)
+
+    if (!isPasswordCorrect) return res.status(400).json({ message: 'Invalid credentials' })
+
+    const token = jwt.sign(
+      { email: existingUser.email, id: existingUser._id },
+      process.env.JWT_SCERET,
+      { expiresIn: '30d' }
+    )
+
+    res.status(200).json({ existingUser, token })
+
+  } catch (err) {
+    res.status(500).json(err)
+  }
+})

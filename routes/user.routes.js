@@ -6,4 +6,6 @@ const UserRoutes = express.Router()
 
 UserRoutes.post('/signup', UserCtrl.registerUser)
 
+UserRoutes.post('/signin', UserCtrl.loginUser)
+
 module.exports = UserRoutes
